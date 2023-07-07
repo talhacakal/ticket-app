@@ -6,6 +6,8 @@ spring:
 
   cloud:
     gateway:
+      default-filters:
+        - name: AuthFilter
       routes:
         - id: notification
           uri: lb://notification
