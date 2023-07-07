@@ -7,7 +7,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### Application ###
-application-secret.properties
+Notification/src/main/resources/application-secret.properties
 
 ### STS ###
 .apt_generated
