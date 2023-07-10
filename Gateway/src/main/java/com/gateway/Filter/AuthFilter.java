@@ -19,6 +19,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
             System.out.println("Auth Path" + exchange.getRequest().getPath());
             System.out.println("Auth Cookie" + exchange.getRequest().getCookies());
             System.out.println("Auth Method" + exchange.getRequest().getMethod());
+            System.out.println(exchange.getRequest().getHeaders());
 
             log.info("Auth Filter");
 

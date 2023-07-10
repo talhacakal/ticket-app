@@ -14,12 +14,12 @@ public class EmailNotificationController {
     @Autowired
     private EmailProducer emailProducer;
 
-    @GetMapping("/")
+    @GetMapping("")
     public String greeting(){
         return "hello";
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public void sendEmail(@RequestBody Email email){
         log.info("Email received ID:"+email.getId());
         this.emailProducer.sendToQueue(email);

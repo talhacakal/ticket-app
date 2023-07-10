@@ -6,13 +6,19 @@ spring:
 
   cloud:
     gateway:
-      default-filters:
-        - name: AuthFilter
       routes:
         - id: notification
           uri: lb://notification
           predicates:
             - Path=/notification/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+
+        - id: security
+          uri: lb://security
+          predicates:
+            - Path=/security/**
           filters:
             - StripPrefix=1
 
