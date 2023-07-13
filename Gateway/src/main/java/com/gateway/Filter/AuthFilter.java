@@ -31,14 +31,14 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
             System.out.println(exchange.getRequest().getPath());
             System.out.println("**********************");
 //            ServerHttpRequest request = exchange.getRequest();
-            List<HttpCookie> cookies = exchange.getRequest().getCookies().get("Authorization");
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(HttpHeaders.COOKIE, cookies.get(0).toString());
-            HttpEntity<String> request = new HttpEntity<>(headers);
-            ResponseEntity<String> response = restTemplate.exchange("http://localhost:8060/api/security/validate", HttpMethod.GET, request, String.class);
-
-            System.out.println(response);
+//            List<HttpCookie> cookies = exchange.getRequest().getCookies().get("Authorization");
+//
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.add(HttpHeaders.COOKIE, cookies.get(0).toString());
+//            HttpEntity<String> request = new HttpEntity<>(headers);
+//            ResponseEntity<String> response = restTemplate.exchange("http://localhost:8060/api/security/validate", HttpMethod.GET, request, String.class);
+//
+//            System.out.println(response);
 
             return chain.filter(exchange);
         });

@@ -1,6 +1,7 @@
 package com.security.Filter;
 
 import com.security.Constants.SecurityConstants;
+import com.security.Entity.User;
 import com.security.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -10,8 +11,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,9 +35,8 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     @Autowired
     private UserRepository userRepository;
 
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)throws ServletException, IOException {
         Cookie cookie = WebUtils.getCookie(request, SecurityConstants.JWT_HEADER);
 
         if (cookie != null){
@@ -43,12 +44,14 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
             try {
                 SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
                 Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
-                String email = String.valueOf(claims.get("username"));
+
+                String UUID = String.valueOf(claims.get("UUID"));
+                User user = this.userRepository.findByUuid(UUID).get();
 
                 Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(this.userRepository.findByEmail(email).get().getRole().getRole()));
+                user.getRoles().forEach(item -> authorities.add(new SimpleGrantedAuthority(item.getRole())));
 
-                Authentication auth = new UsernamePasswordAuthenticationToken(email, null, authorities);
+                Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -63,6 +66,4 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
         return path.equals("/api/security/register") || path.equals("/api/security/login");
     }
-
-
 }

@@ -1,6 +1,5 @@
 package com.security.Filter;
 
-import com.security.Repository.RoleRepository;
 import com.security.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -33,12 +31,10 @@ public class UsernamePwdAuthenticationProvider implements AuthenticationProvider
         if (!user.isEmpty()) {
             if (passwordEncoder.matches(password, user.get().getPassword())) {
                 List<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(user.get().getRole().getRole()));
+                user.get().getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRole())));
                 return new UsernamePasswordAuthenticationToken(email, password, authorities);
-            }
-            else throw new BadCredentialsException("Invalid Password!");
-        }
-        else throw new BadCredentialsException("No user registered with this details!");
+            } else throw new BadCredentialsException("Invalid Password!");
+        } else throw new BadCredentialsException("No user registered with this details!");
     }
 
     @Override
