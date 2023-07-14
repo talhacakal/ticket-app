@@ -15,6 +15,7 @@
     <module>Eureka</module>
       <module>Gateway</module>
       <module>Security</module>
+    <module>Voyage</module>
   </modules>
 
   <properties>
