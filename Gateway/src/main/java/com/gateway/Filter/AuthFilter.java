@@ -4,47 +4,34 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
 
 import java.util.Collection;
 import java.util.List;
 
 @Slf4j
 @Component
-public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
+//public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
+public class AuthFilter implements GlobalFilter {
 
-    @Autowired
-    private RestTemplate restTemplate;
-
-    public AuthFilter(){
-        super(Config.class);
-    }
 
     @Override
-    public GatewayFilter apply(Config config) {
-        return ((exchange, chain) -> {
-            System.out.println(exchange.getRequest().getCookies());
-            System.out.println(exchange.getRequest().getPath());
-            System.out.println("**********************");
-//            ServerHttpRequest request = exchange.getRequest();
-//            List<HttpCookie> cookies = exchange.getRequest().getCookies().get("Authorization");
-//
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.add(HttpHeaders.COOKIE, cookies.get(0).toString());
-//            HttpEntity<String> request = new HttpEntity<>(headers);
-//            ResponseEntity<String> response = restTemplate.exchange("http://localhost:8060/api/security/validate", HttpMethod.GET, request, String.class);
-//
-//            System.out.println(response);
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        ServerHttpRequest request = exchange.getRequest()
+                .mutate()
+                .header("UUID","deneme")
+                .build();
 
-            return chain.filter(exchange);
-        });
-    }
+        ServerWebExchange mutatedExchange = exchange.mutate().request(request).build();
 
-    public static class Config{
-
+        return chain.filter(mutatedExchange);
     }
 }

@@ -13,7 +13,7 @@ spring:
             - Path=/notification/**
           filters:
             - StripPrefix=1
-            - AuthFilter
+#            - AuthFilter
 
         - id: security
           uri: lb://security

@@ -14,3 +14,22 @@ services:
       - "6050:3306"
     environment:
       MYSQL_ROOT_PASSWORD: 123456
+
+  mongodb-db:
+    image: mongo
+    restart: unless-stopped
+    container_name: mongodb
+    ports:
+      - 6060:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 123456
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - "6070:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 123456

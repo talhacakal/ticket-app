@@ -1,7 +1,7 @@
 package com.voyage.Controller;
 
-import com.voyage.DTO.DTOHelper;
-import com.voyage.DTO.SeatDTO;
+import com.voyage.Entity.DTO.DTOHelper;
+import com.voyage.Entity.DTO.SeatDTO;
 import com.voyage.Entity.Enum.GenderType;
 import com.voyage.Entity.Enum.SeatStatus;
 import com.voyage.Entity.Seat;
@@ -28,6 +28,18 @@ public class SeatController {
         return ResponseEntity.ok(
                 DTOHelper.getSeats(this.voyageRepository.findByVoyageUUID(voyageUUID)
                         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seats not found. Voyaga ID invalid"))));
+    }
+    @PostMapping(params = {"gender","voyageUID","seatNo"})
+    public ResponseEntity ticketSale(@RequestParam String voyageUID, @RequestParam int seatNo, @RequestParam int gender){
+        Seat seat = this.seatRepository.findByVoyage_VoyageUUIDAndNumber(voyageUID, seatNo)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seats not found. Voyaga ID or seat number invalid"));
+
+        if (seat.getSeatStatus() == SeatStatus.DOLU) return ResponseEntity.status(HttpStatus.CONFLICT).body("Seat is not empty.");
+
+        seat.setSeatStatus(SeatStatus.DOLU);
+        seat.setGenderType(GenderType.fromInt(gender));
+        this.seatRepository.save(seat);
+        return ResponseEntity.ok().build();
     }
     @PutMapping(value = "/{voyageUUID}")
     public ResponseEntity updateSeats(@PathVariable String voyageUUID, @RequestBody List<SeatDTO> seatDTOList){

@@ -1,4 +1,4 @@
-package com.voyage.DTO;
+package com.voyage.Entity.DTO;
 
 import com.voyage.Entity.Voyage;
 

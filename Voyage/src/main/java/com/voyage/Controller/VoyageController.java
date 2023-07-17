@@ -1,7 +1,7 @@
 package com.voyage.Controller;
 
-import com.voyage.DTO.DTOHelper;
-import com.voyage.DTO.VoyageDTO;
+import com.voyage.Entity.DTO.DTOHelper;
+import com.voyage.Entity.DTO.VoyageDTO;
 import com.voyage.Entity.Enum.BussType;
 import com.voyage.Entity.Enum.GenderType;
 import com.voyage.Entity.Enum.SeatStatus;
@@ -28,6 +28,21 @@ public class VoyageController {
 
     private final VoyageRepository voyageRepository;
     private final BussCompanyRepository bussCompanyRepository;
+    @GetMapping(path = "/{voyageUUID}")
+    public ResponseEntity<VoyageDTO> getVoyage(@PathVariable String voyageUUID){
+        return ResponseEntity.ok(
+                this.voyageRepository.findByVoyageUUID(voyageUUID)
+                        .map(VoyageDTO::new)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seats not found. Voyaga ID invalid"))
+        );
+    }
+    @GetMapping(params = {"voyageUUID"})
+    public ResponseEntity<Integer> getVoyagePrice(@RequestParam String voyageUUID){
+        return ResponseEntity.ok(
+                this.voyageRepository.getVoyagePrice(voyageUUID)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "voyageUUID not found. Voyaga ID invalid"))
+        );
+    }
     @GetMapping(params = {"from","to","vehicleType"})
     public ResponseEntity<List<VoyageDTO>> searchVoyageByVehicle(@RequestParam String from, @RequestParam String to, @RequestParam String vehicleType) {
         List<Voyage> list = this.voyageRepository.findByFromWhereAndToWhereAndVehicleTypeOrderByDepartureTimeAsc(from, to, VehicleType.fromString(vehicleType));

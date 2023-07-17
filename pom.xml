@@ -16,6 +16,8 @@
       <module>Gateway</module>
       <module>Security</module>
     <module>Voyage</module>
+      <module>Ticket</module>
+      <module>Payment</module>
   </modules>
 
   <properties>

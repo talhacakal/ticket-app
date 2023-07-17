@@ -1,5 +1,6 @@
-package com.voyage.DTO;
+package com.voyage.Entity.DTO;
 
+import com.voyage.Entity.Voyage;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -36,6 +37,20 @@ public class VoyageDTO {
         this.price = price;
         this.voyageStatus = voyageStatus;
         this.seats = seats;
+    }
 
+    public VoyageDTO(Voyage voyage) {
+        this.voyageUUID = voyage.getVoyageUUID();
+        this.vehicleCompany = voyage.getVehicleCompany().getName();
+        this.vehicleType = voyage.getVehicleType().getVehicleType();
+        this.bussType = voyage.getBussType().getBussType();
+        this.from = voyage.getFromWhere();
+        this.to = voyage.getToWhere();
+        this.departureTime = voyage.getDepartureTime();
+        this.departureDate = voyage.getDepartureDate();
+        this.travelDuration = voyage.getTravelDuration();
+        this.price = voyage.getPrice();
+        this.voyageStatus = voyage.isVoyageStatus();
+        this.seats = voyage.getSeats().size();
     }
 }
