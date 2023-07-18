@@ -38,9 +38,10 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)throws ServletException, IOException {
         Cookie cookie = WebUtils.getCookie(request, SecurityConstants.JWT_HEADER);
-
-        if (cookie != null){
-            String jwt = cookie.getValue();
+        String authorizationHeader = request.getHeader(SecurityConstants.JWT_HEADER);
+         if (cookie != null || authorizationHeader != null){
+//            String jwt = cookie.getValue();
+            String jwt = cookie != null ? cookie.getValue() : authorizationHeader;
             try {
                 SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
                 Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
@@ -53,8 +54,6 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), authorities);
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                response.setHeader("UUID",UUID);
-                request.setAttribute("UUID",UUID);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 throw new BadCredentialsException("Invalid Token");

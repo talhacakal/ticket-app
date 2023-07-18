@@ -51,7 +51,8 @@ public class TicketController {
         List<Ticket> tickets=new ArrayList<>();
         int ticketPrice = requestMethods.getTicketPrice(ticketSaleDTO.getVoyageUID());
         for(TicketItem ticket : ticketSaleDTO.getTicketItems()){
-            ResponseEntity seatStatus = requestMethods.getSeat(ticketSaleDTO.getVoyageUID(), ticket.getSeatNo(), ticket.getGender());
+            ResponseEntity seatStatus = requestMethods
+                    .getSeat(ticketSaleDTO.getVoyageUID(), ticket.getSeatNo(), ticket.getGender());
             if (seatStatus.getStatusCode() != HttpStatus.OK) return seatStatus;
 
             if (requestMethods.getPaymantStatus(ticketPrice, ticketSaleDTO.getPaymentType()) != HttpStatus.OK)
@@ -71,7 +72,6 @@ public class TicketController {
             var savedTicket = this.ticketRepository.save(newTicket);
             tickets.add(savedTicket);
         }
-
         return ResponseEntity.ok(tickets);
     }
 
