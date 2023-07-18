@@ -1,4 +1,4 @@
-package com.utils.Annotation;
+package com.ticketapp.Annotation;
 
 public enum Role {
     ROLE_DEV,

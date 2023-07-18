@@ -1,9 +1,9 @@
 package com.ticketapp.Controller;
 
+import com.ticketapp.Annotation.Authorize;
+import com.ticketapp.Annotation.Role;
 import com.ticketapp.Queue.Email;
 import com.ticketapp.Queue.EmailProducer;
-import com.utils.Annotation.Authorize;
-import com.utils.Annotation.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

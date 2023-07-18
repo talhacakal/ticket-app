@@ -1,11 +1,10 @@
-package com.utils.Annotation;
+package com.ticketapp.Annotation;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -31,6 +30,7 @@ public class AuthorizeAspect {
                 .filter(Objects::nonNull).findFirst().orElseThrow(()-> new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Something went wrong."));
 
         Cookie cookie = WebUtils.getCookie(request, "Authorization");
+        if (cookie == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Cookie missing");
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", cookie.getValue());
 

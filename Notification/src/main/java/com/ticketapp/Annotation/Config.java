@@ -1,4 +1,4 @@
-package com.utils.Configuration;
+package com.ticketapp.Annotation;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

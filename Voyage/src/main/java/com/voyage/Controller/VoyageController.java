@@ -1,5 +1,7 @@
 package com.voyage.Controller;
 
+import com.voyage.Annotation.Authorize;
+import com.voyage.Annotation.Role;
 import com.voyage.Entity.DTO.DTOHelper;
 import com.voyage.Entity.DTO.VoyageDTO;
 import com.voyage.Entity.Enum.BussType;
@@ -58,10 +60,8 @@ public class VoyageController {
 
         return ResponseEntity.ok(DTOHelper.getDtos(list));
     }
-
-    /* Ony ADMIN  */
-    // Add New Voyage
-    @PostMapping(path = "")    //TODO: Only Admin
+    @PostMapping(path = "")
+    @Authorize(role = Role.ROLE_ADMIN)
     public ResponseEntity<Object> addVoyage(@RequestBody VoyageDTO voyageDTO){
         Voyage voyage = Voyage.builder()
                 .UUID("36dec986-5070-4c72-b031-223dc174756e") //TODO: update here
@@ -81,9 +81,8 @@ public class VoyageController {
         this.voyageRepository.save(voyage);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
-    // Update Voyage
-    @PutMapping(path = "")  //TODO: Only Admin
+    @PutMapping(path = "")
+    @Authorize(role = Role.ROLE_ADMIN)
     public ResponseEntity<Object> updateVoyage(@RequestBody VoyageDTO voyageDTO){
         var voyage = this.voyageRepository.findByVoyageUUID(voyageDTO.getVoyageUUID())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Voyage not found. Voyage ID invalid"));
@@ -106,9 +105,8 @@ public class VoyageController {
 
         return ResponseEntity.ok().build();
     }
-
-    // Update Voyage Status
-    @PutMapping(path = "", params = {"voyageUUID","status"}) //TODO: Only Admin
+    @PutMapping(path = "", params = {"voyageUUID","status"})
+    @Authorize(role = Role.ROLE_ADMIN)
     public ResponseEntity<Object> updateVoyageStatus(@RequestParam String voyageUUID, @RequestParam boolean status){
         var updatedVoyage = this.voyageRepository.findByVoyageUUID(voyageUUID)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Seats not found. Voyage ID invalid"));

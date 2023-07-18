@@ -18,7 +18,6 @@
     <module>Voyage</module>
       <module>Ticket</module>
       <module>Payment</module>
-      <module>Utils</module>
   </modules>
 
   <properties>

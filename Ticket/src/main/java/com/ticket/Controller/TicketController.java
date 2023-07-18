@@ -1,5 +1,7 @@
 package com.ticket.Controller;
 
+import com.ticket.Annotation.Authorize;
+import com.ticket.Annotation.Role;
 import com.ticket.Config.RequestMethods;
 import com.ticket.Config.TicketTotalDTO;
 import com.ticket.Entity.DTO.TicketDTO;
@@ -34,7 +36,8 @@ public class TicketController {
                         .map(item -> new TicketDTO(item, requestMethods.getVoyage(item.getVoyageUID())))
                         .toList());
     }
-    @GetMapping("/total")   //TODO: only admin
+    @GetMapping("/total")
+    @Authorize(role = Role.ROLE_ADMIN)
     public ResponseEntity<TicketTotalDTO> getTotal(@RequestParam String voyageUID){
         List<Ticket> list = this.ticketRepository.findByVoyageUID(voyageUID);
         int totalAmount= list.stream().mapToInt(Ticket::getPrice).sum();

@@ -1,4 +1,4 @@
-package com.utils.Annotation;
+package com.ticketapp.Annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
