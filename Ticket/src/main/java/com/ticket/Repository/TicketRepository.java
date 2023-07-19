@@ -9,5 +9,6 @@ import java.util.List;
 public interface TicketRepository extends MongoRepository<Ticket, String> {
     List<Ticket> findByUUID(String UUID);
     List<Ticket> findByVoyageUID(String voyageUID);
-    long countByVoyageUID(String voyageUID);
+    List<Ticket> findByUUIDAndVoyageUID(String UUID, String voyageUID);
+
 }

@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.WebUtils;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Aspect
@@ -34,10 +35,11 @@ public class AuthorizeAspect {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", cookie.getValue());
 
-        String url = "http://localhost:8060/api/security/authorization?role="+authorize.role();
-        ResponseEntity<Boolean> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(headers), Boolean.class);
+        String url = "http://localhost:8060/api/security/getAuthorities";
+        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<String>(headers), List.class);
+        boolean hasAuthority = response.getBody().stream().anyMatch(item -> item.equals(authorize.role().name()));
 
-        if (Boolean.TRUE.equals(response.getBody()))
+        if (Boolean.TRUE.equals(hasAuthority))
             return joinPoint.proceed();
         else
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "not authorized to access ");

@@ -1,4 +1,4 @@
-package com.ticket.Config;
+package com.ticket.Entity.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

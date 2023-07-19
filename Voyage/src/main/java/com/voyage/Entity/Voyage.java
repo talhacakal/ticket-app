@@ -1,7 +1,7 @@
 package com.voyage.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.voyage.Entity.Enum.BussType;
+import com.voyage.Entity.DTO.VoyageDTO;
 import com.voyage.Entity.Enum.VehicleType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,10 +47,6 @@ public class Voyage {
     @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
 
-    @Column(name = "buss_type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private BussType bussType;
-
     @Column(name = "from_where", nullable = false)
     private String fromWhere;
 
@@ -65,7 +61,7 @@ public class Voyage {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "vehicle_company_id")
-    private BussCompany vehicleCompany;
+    private VehicleCompany vehicleCompany;
 
     @OneToMany(fetch = FetchType.LAZY   ,cascade = CascadeType.ALL)
     @JoinColumn(name = "voyage_id", referencedColumnName = "id")
@@ -85,17 +81,31 @@ public class Voyage {
         this.voyageUUID = java.util.UUID.randomUUID().toString();
     }
 
-    public Voyage(String UUID, String voyageUUID, Time departureTime, int travelDuration, BussType bussType, String fromWhere, String toWhere, VehicleType vehicleType, Date departureDate, int price, BussCompany vehicleCompany) {
-        this.UUID = UUID;
-        this.voyageUUID = voyageUUID;
-        this.departureTime = departureTime;
-        this.travelDuration = travelDuration;
-        this.bussType = bussType;
-        this.fromWhere = fromWhere;
-        this.toWhere = toWhere;
-        this.vehicleType = vehicleType;
-        this.departureDate = departureDate;
-        this.price = price;
+    public void updateVoyage(VoyageDTO voyageDTO, VehicleCompany vehicleCompany){
+        this.departureDate = voyageDTO.getDepartureDate();
+        this.departureTime = voyageDTO.getDepartureTime();
+        this.travelDuration = voyageDTO.getTravelDuration();
+        this.vehicleType = VehicleType.fromString(voyageDTO.getVehicleType());
+        this.fromWhere = voyageDTO.getFrom();
+        this.toWhere = voyageDTO.getTo();
+        this.price = voyageDTO.getPrice();
+        this.voyageStatus = voyageDTO.isVoyageStatus();
         this.vehicleCompany = vehicleCompany;
     }
+
+    public Voyage(String UUID, VoyageDTO voyageDTO, VehicleCompany vehicleCompany, List<Seat> seats){
+        this.UUID = UUID;
+        this.voyageUUID = voyageDTO.getVoyageUUID();
+        this.departureDate = voyageDTO.getDepartureDate();
+        this.departureTime = voyageDTO.getDepartureTime();
+        this.travelDuration = voyageDTO.getTravelDuration();
+        this.vehicleType = VehicleType.fromString(voyageDTO.getVehicleType());
+        this.fromWhere = voyageDTO.getFrom();
+        this.toWhere = voyageDTO.getTo();
+        this.price = voyageDTO.getPrice();
+        this.voyageStatus = voyageDTO.isVoyageStatus();
+        this.vehicleCompany = vehicleCompany;
+        this.seats = seats;
+    }
+
 }

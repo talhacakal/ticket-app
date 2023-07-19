@@ -44,4 +44,9 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
+    }
+
 }

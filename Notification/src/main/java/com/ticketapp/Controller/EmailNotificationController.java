@@ -1,13 +1,13 @@
 package com.ticketapp.Controller;
 
-import com.ticketapp.Annotation.Authorize;
-import com.ticketapp.Annotation.Role;
 import com.ticketapp.Queue.Email;
 import com.ticketapp.Queue.EmailProducer;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 @Slf4j
@@ -17,12 +17,6 @@ public class EmailNotificationController {
 
     @Autowired
     private EmailProducer emailProducer;
-
-    @GetMapping("")
-    @Authorize(role = Role.ROLE_DEV)
-    public String greeting(HttpServletRequest request){
-        return "hello";
-    }
 
     @PostMapping("")
     public void sendEmail(@RequestBody Email email){

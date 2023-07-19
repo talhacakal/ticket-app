@@ -26,5 +26,4 @@ public class EmailSenderService {
         log.info("Email Successfully Sent ID: " + email.getId());
     }
 
-
 }

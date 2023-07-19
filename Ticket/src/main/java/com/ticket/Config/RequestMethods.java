@@ -1,13 +1,12 @@
 package com.ticket.Config;
 
 import com.ticket.Entity.DTO.VoyageDTO;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Component
 public class RequestMethods {
@@ -36,5 +35,22 @@ public class RequestMethods {
         ResponseEntity<Integer> response = restTemplate.exchange(url, HttpMethod.GET, null, Integer.class);
         return response.getBody();
     }
+    public List getAuthorities(String cookieValue){
+        String url="http://localhost:8060/api/security/getAuthorities";
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", cookieValue);
+
+        ResponseEntity<List> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), List.class);
+        return response.getBody();
+    }
+    public String getUUID(String cookieValue) {
+        String url="http://localhost:8060/api/security/getUUID";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", cookieValue);
+
+        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+        return response.getBody();
+    }
 }

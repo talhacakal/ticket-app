@@ -11,6 +11,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.descriptor.web.ContextHandler;
 import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,13 +21,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -39,6 +43,8 @@ public class SecurityController {
 
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+
+    private final RestTemplate restTemplate;
 
     @GetMapping("/login")
     public ResponseEntity login(@RequestBody LoginDTO loginDTO){
@@ -66,7 +72,7 @@ public class SecurityController {
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody LoginDTO loginDTO){
-        if (!this.userRepository.findByEmail(loginDTO.getEmail()).isEmpty())
+        if (this.userRepository.findByEmail(loginDTO.getEmail()).isPresent())
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists");
 
         Set<Role> role = new HashSet<>();
@@ -79,27 +85,26 @@ public class SecurityController {
                 .subject("Registration")
                 .body("Success").build();
 
-        WebClient webClient = WebClient.builder().build();
-        webClient.post()
-                .uri("http://localhost:8050/api/email")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body(BodyInserters.fromValue(emailDTO))
-                .exchange().subscribe();
+        restTemplate.postForEntity("http://localhost:8050/api/email", emailDTO, EmailDTO.class);
 
-        return ResponseEntity.ok().body("");
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/validate")
-    public ResponseEntity validate(HttpServletRequest request){
-        return ResponseEntity.ok("OK");
+    public ResponseEntity validate(){
+        return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/authorization")
-    public ResponseEntity hasAuthority(@RequestParam String role){
-        boolean hasAuthority = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
-                .stream()
-                .anyMatch(item -> item.getAuthority().equals(role));
-        return ResponseEntity.ok(hasAuthority);
+    @GetMapping("/getAuthorities")
+    public ResponseEntity<List<String>> authorities(){
+        return ResponseEntity.ok(
+                SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().map(GrantedAuthority::getAuthority).toList()
+        );
+    }
+    @GetMapping("/getUUID")
+    public ResponseEntity<String> getUUID(){
+        String UUID = this.userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,"No user found")).getUuid();
+        return ResponseEntity.ok(UUID);
     }
 
 }

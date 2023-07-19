@@ -11,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @ToString
-public class BussCompany {
+public class VehicleCompany {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

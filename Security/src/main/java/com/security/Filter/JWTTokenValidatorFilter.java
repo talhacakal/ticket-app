@@ -39,8 +39,8 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)throws ServletException, IOException {
         Cookie cookie = WebUtils.getCookie(request, SecurityConstants.JWT_HEADER);
         String authorizationHeader = request.getHeader(SecurityConstants.JWT_HEADER);
-         if (cookie != null || authorizationHeader != null){
-//            String jwt = cookie.getValue();
+
+        if (cookie != null || authorizationHeader != null){
             String jwt = cookie != null ? cookie.getValue() : authorizationHeader;
             try {
                 SecretKey key = Keys.hmacShaKeyFor(SecurityConstants.JWT_KEY.getBytes(StandardCharsets.UTF_8));
