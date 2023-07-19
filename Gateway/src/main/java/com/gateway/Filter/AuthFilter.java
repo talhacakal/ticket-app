@@ -1,37 +1,44 @@
 package com.gateway.Filter;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.*;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collection;
 import java.util.List;
 
 @Slf4j
 @Component
-//public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
-public class AuthFilter implements GlobalFilter {
+public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
 
-
+    @Autowired
+    private RestTemplate restTemplate;
+    public AuthFilter(){
+        super(Config.class);
+    }
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest()
-                .mutate()
-                .header("UUID","deneme")
-                .build();
+    public GatewayFilter apply(Config config) {
+        return ((exchange, chain) -> {
+            HttpHeaders headers = new HttpHeaders();
+            List<HttpCookie> cookies = exchange.getRequest().getCookies().get("Authorization");
 
-        ServerWebExchange mutatedExchange = exchange.mutate().request(request).build();
+            if (!cookies.isEmpty())
+                cookies.forEach(item -> headers.set(item.getName(),item.getValue()));
+            else
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cookie is missing");
 
-        return chain.filter(mutatedExchange);
+            ResponseEntity response = restTemplate.exchange("http://localhost:8060/api/security/validate", HttpMethod.GET, new HttpEntity<String>(headers), ResponseEntity.class);
+            if (response.getStatusCode() == HttpStatus.OK)
+                return chain.filter(exchange);
+            else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cookie is not valid");
+        });
+    }
+
+    public static class Config{
+
     }
 }

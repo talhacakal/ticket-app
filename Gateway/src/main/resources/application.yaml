@@ -7,20 +7,28 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: notification
-          uri: lb://notification
-          predicates:
-            - Path=/notification/**
-          filters:
-            - StripPrefix=1
-#            - AuthFilter
-
         - id: security
           uri: lb://security
           predicates:
             - Path=/security/**
           filters:
             - StripPrefix=1
+
+        - id: voyage
+          uri: lb://voyage
+          predicates:
+            - Path=/voyage/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
+
+        - id: ticket
+          uri: lb://ticket
+          predicates:
+            - Path=/ticket/**
+          filters:
+            - StripPrefix=1
+            - AuthFilter
 
 eureka:
   client:
