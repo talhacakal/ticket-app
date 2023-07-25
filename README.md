@@ -26,3 +26,5 @@ Online uçak ve otobüs bilet satış uygulaması için gerekli API’lerın yaz
 * Spring Boot
 * MySQL / Postgre / MongoDB (Her servis farklı db kullanabilir ihtiyaca göre kullanabilirsiniz)
 * RabbbitMQ
+## Microservices Architecture Diagram
+![1 drawio](https://github.com/talhacakal/ticket-app/assets/65471143/608f9b37-dfaf-4dde-81ac-df00683ea37c)
